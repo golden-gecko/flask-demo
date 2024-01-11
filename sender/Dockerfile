@@ -1,6 +1,6 @@
-FROM python:3.9.0-alpine3.12
+FROM python:3.12.1-bookworm
 
-WORKDIR /usr/local/app
+WORKDIR /app
 
 COPY sender/requirements.txt .
 
