@@ -31,9 +31,4 @@ status=$?
 
 set -e
 
-if [[ ${status} -eq 0 ]]
-then
-    cp report_success.xml ${REPORT_DIRECTORY}/report_mypy.xml
-fi
-
 exit ${status}

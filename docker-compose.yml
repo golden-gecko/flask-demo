@@ -66,6 +66,7 @@ services:
       - ELASTIC_HOST=${ELASTIC_HOST}
       - ELASTIC_PORT=${ELASTIC_PORT}
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://${ELASTIC_HOST}:${ELASTIC_PORT}']
       interval: 10s
