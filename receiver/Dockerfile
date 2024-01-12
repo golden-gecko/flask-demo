@@ -1,9 +1,6 @@
-FROM python:3.9.0-alpine3.12
+FROM python:3.12.1-bookworm
 
-WORKDIR /usr/local/app
-
-RUN apk add \
-    curl
+WORKDIR /app
 
 COPY receiver/requirements.txt .
 
@@ -18,6 +15,4 @@ COPY receiver .
 
 EXPOSE 7000
 
-ENTRYPOINT ["gunicorn"]
-
-CMD ["--bind", "0.0.0.0:7000", "--statsd-host=192.168.10.20:9125", "--statsd-prefix=api", "--workers", "1", "app:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "7000", "app:app"]

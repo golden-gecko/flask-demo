@@ -1,8 +1,4 @@
-import datetime
 import json
-import random
-import requests
-import time
 
 from influxdb import InfluxDBClient
 

@@ -21,7 +21,7 @@ IMAGE_NAME=core-common-tools
 docker build -t ${IMAGE_NAME} .
 docker run \
     -e PYTHONDONTWRITEBYTECODE=1 \
-    -v ${PWD}:/usr/local/app \
+    -v ${PWD}:/app \
     -v ${REPORT_DIRECTORY}:/usr/local/report \
     -v ${SOURCE_DIRECTORY}:/usr/local/src \
     ${IMAGE_NAME} \

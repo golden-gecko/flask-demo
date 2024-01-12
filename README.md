@@ -1,14 +1,12 @@
 # Friends
 
-Flask demo.
+REST demo.
 
 ## Prerequisites
 
 Install `Docker`, `Docker Compose` and `PostgreSQL` client.
 
-## How to create database for first time
-
-Use `psql` to create database and user. Read `.env` file to get user and password.
+## Create database for first time
 
 ```bash
 ./db_init.sh
@@ -20,7 +18,7 @@ Use `psql` to create database and user. Read `.env` file to get user and passwor
 
 Documentation is available in `src/v1.yaml` file.
 
-## How to run
+## Run
 
 Run:
 
@@ -28,7 +26,7 @@ Run:
 ./run.sh
 ```
 
-## How to test
+## Test
 
 Install:
 

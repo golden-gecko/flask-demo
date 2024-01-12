@@ -1,7 +1,6 @@
 .idea
 .vscode
-report.html
-report.xml
-test/venv
-*.log
-*.pyc
+__pycache__
+venv
+*.html
+*.xml
