@@ -1,14 +1,12 @@
 version: '3.8'
 
 networks:
-
   main:
     ipam:
       config:
         - subnet: 192.168.10.0/24
 
 services:
-
   api:
     build:
       context: .
@@ -100,6 +98,8 @@ services:
     networks:
       main:
         ipv4_address: ${INFLUXDB_HOST}
+    ports:
+      - ${INFLUXDB_PORT}:${INFLUXDB_PORT}
     restart: unless-stopped
     volumes:
       - influxdb:/var/lib/influxdb

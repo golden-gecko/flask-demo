@@ -13,6 +13,4 @@ RUN pip3 install \
 COPY common .
 COPY consumer .
 
-ENTRYPOINT ["python3"]
-
-CMD ["__main__.py"]
+CMD ["python3", "__main__.py"]
