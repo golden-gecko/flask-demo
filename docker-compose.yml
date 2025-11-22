@@ -1,0 +1,249 @@
+version: '3.2'
+
+networks:
+
+  main:
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    depends_on:
+      - logstash
+      - postgres
+      - redis
+    env_file:
+      - .env
+    environment:
+      - LOG_APPLICATION_NAME=api
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://${API_HOST}:${API_PORT}/v1/healthcheck']
+      interval: 10s
+      timeout: 2s
+      retries: 2
+    networks:
+      main:
+        ipv4_address: ${API_HOST}
+    restart: unless-stopped
+
+  chronograf:
+    depends_on:
+      - influxdb
+    image: chronograf:1.8.8-alpine
+    networks:
+      main:
+        ipv4_address: ${CHRONOGRAF_HOST}
+    ports:
+      - ${CHRONOGRAF_PORT}:${CHRONOGRAF_PORT}
+    restart: unless-stopped
+    volumes:
+      - chronograf:/var/lib/chronograf
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+    depends_on:
+      - influxdb
+      - logstash
+      - rabbit
+    env_file:
+      - .env
+    environment:
+      - LOG_APPLICATION_NAME=consumer
+    networks:
+      main:
+        ipv4_address: ${CONSUMER_HOST}
+    restart: unless-stopped    
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_HOST=${ELASTIC_HOST}
+      - ELASTIC_PORT=${ELASTIC_PORT}
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://${ELASTIC_HOST}:${ELASTIC_PORT}']
+      interval: 10s
+      timeout: 2s
+      retries: 2
+    networks:
+      main:
+        ipv4_address: ${ELASTIC_HOST}
+    restart: unless-stopped
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+
+  grafana:
+    build:
+      context: grafana
+    depends_on:
+      - prometheus
+    networks:
+      main:
+        ipv4_address: ${GRAFANA_HOST}
+    ports:
+      - ${GRAFANA_PORT}:${GRAFANA_PORT}
+    restart: unless-stopped
+    volumes:
+      - grafana_etc:/etc/grafana
+      - grafana_var_lib:/var/lib/grafana
+
+  influxdb:
+    image: influxdb:1.7.10-alpine
+    networks:
+      main:
+        ipv4_address: ${INFLUXDB_HOST}
+    restart: unless-stopped
+    volumes:
+      - influxdb:/var/lib/influxdb
+
+  kibana:
+    depends_on:
+      - elastic
+    image: docker.elastic.co/kibana/kibana:7.9.3
+    environment:
+      - ELASTICSEARCH_HOSTS=http://${ELASTIC_HOST}:${ELASTIC_PORT}
+    networks:
+      main:
+        ipv4_address: ${KIBANA_HOST}
+    ports:
+      - ${KIBANA_PORT}:${KIBANA_PORT}
+    restart: unless-stopped
+    volumes:
+      - kibana:/usr/share/kibana/config
+
+  logstash:
+    depends_on:
+      - elastic
+    image: docker.elastic.co/logstash/logstash:7.9.3
+    networks:
+      main:
+        ipv4_address: ${LOGSTASH_HOST}
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+
+  node_exporter:
+    image: prom/node-exporter:v1.0.1
+    networks:
+      main:
+        ipv4_address: ${NODE_EXPORTER_HOST}
+    restart: unless-stopped
+
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "psql", "-d", "${POSTGRES_DATABASE_NAME}", "-U", "${POSTGRES_USER}", "-c", "select 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 2
+    image: postgres:13.0-alpine
+    networks:
+      main:
+        ipv4_address: ${POSTGRES_HOST}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    restart: unless-stopped
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  prometheus:
+    depends_on:
+      - node_exporter
+      - statsd_exporter
+    image: prom/prometheus:v2.22.1
+    networks:
+      main:
+        ipv4_address: ${PROMETHEUS_HOST}
+    ports:
+      - ${PROMETHEUS_PORT}:${PROMETHEUS_PORT}
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./prometheus/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        read_only: true
+
+  rabbit:
+    build:
+      context: rabbit
+    networks:
+      main:
+        ipv4_address: ${RABBIT_HOST}
+    ports:
+      - 15672:15672
+    restart: unless-stopped
+
+  redis:
+    image: redis:6.0.9-alpine
+    networks:
+      main:
+        ipv4_address: ${REDIS_HOST}
+    restart: unless-stopped
+
+  receiver:
+    build:
+      context: .
+      dockerfile: receiver/Dockerfile
+    depends_on:
+      - logstash
+      - rabbit
+    env_file:
+      - .env
+    environment:
+      - LOG_APPLICATION_NAME=receiver
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://${RECEIVER_HOST}:${RECEIVER_PORT}/v1/healthcheck']
+      interval: 10s
+      timeout: 2s
+      retries: 2
+    networks:
+      main:
+        ipv4_address: ${RECEIVER_HOST}
+    restart: unless-stopped
+
+  sender:
+    build:
+      context: .
+      dockerfile: sender/Dockerfile
+    depends_on:
+      - logstash
+      - receiver
+    env_file:
+      - .env
+    environment:
+      - LOG_APPLICATION_NAME=sender
+    networks:
+      main:
+    restart: unless-stopped
+
+  statsd_exporter:
+    image: prom/statsd-exporter:v0.18.0
+    networks:
+      main:
+        ipv4_address: ${STATSD_EXPORTER_HOST}
+    restart: unless-stopped
+
+volumes:
+  chronograf:
+  elastic:
+  grafana_etc:
+  grafana_var_lib:
+  influxdb:
+  kibana:
+  postgres:

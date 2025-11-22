@@ -1,0 +1,467 @@
+openapi: 3.0.1
+
+info:
+  title: API
+  version: "1.0"
+
+servers:
+- url: /v1
+
+paths:
+
+  /healthcheck:
+
+    get:
+      tags:
+      - Maintenance
+      summary: Return success if service is alive.
+      operationId: controllers.v1.healthcheck.healthcheck
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+  /products:
+
+    get:
+      tags:
+      - Products
+      summary: Return products.
+      operationId: controllers.v1.products.get_all
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+    post:
+      tags:
+      - Products
+      summary: Create single product.
+      operationId: controllers.v1.products.create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/request_products'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+  /products/{product_id}:
+
+    delete:
+      tags:
+      - Products
+      summary: Delete single product.
+      operationId: controllers.v1.products.delete
+      parameters:
+      - $ref: '#/components/parameters/parameter_product_id'
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+    get:
+      tags:
+      - Products
+      summary: Return single product.
+      operationId: controllers.v1.products.get
+      parameters:
+      - $ref: '#/components/parameters/parameter_product_id'
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+  /users:
+
+    get:
+      tags:
+      - Users
+      summary: Return users.
+      operationId: controllers.v1.users.get_all
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+    post:
+      tags:
+      - Users
+      summary: Create single user.
+      operationId: controllers.v1.users.create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/request_users'
+        required: true
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+  /users/{user_id}:
+
+    delete:
+      tags:
+      - Users
+      summary: Delete single user.
+      operationId: controllers.v1.users.delete
+      parameters:
+      - $ref: '#/components/parameters/parameter_user_id'
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+    get:
+      tags:
+      - Users
+      summary: Return single user.
+      operationId: controllers.v1.users.get
+      parameters:
+      - $ref: '#/components/parameters/parameter_user_id'
+      responses:
+        200:
+          $ref: '#/components/responses/response_ok'
+        400:
+          $ref: '#/components/responses/response_bad_request'
+        401:
+          $ref: '#/components/responses/response_unauthorized'
+        403:
+          $ref: '#/components/responses/response_forbidden'
+        404:
+          $ref: '#/components/responses/response_not_found'
+        500:
+          $ref: '#/components/responses/response_internal_server_error'
+        503:
+          $ref: '#/components/responses/response_service_unavailable'
+
+components:
+
+  schemas:
+
+    property_product_name:
+      maxLength: 200
+      minLength: 1
+      type: string
+      example: Bread
+
+    property_product_price:
+      type: number
+      example: 7.50
+
+    property_user_name:
+      maxLength: 200
+      minLength: 1
+      type: string
+      example: John
+
+    request_products:
+      required:
+      - name
+      - price
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/property_product_name'
+        price:
+          $ref: '#/components/schemas/property_product_price'
+
+    request_users:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/property_user_name'
+
+    response_meta_bad_request:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Bad Request.
+
+    response_meta_not_found:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Not Found.
+
+    response_meta_forbidden:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 403
+        message:
+          type: string
+          example: Forbidden.
+
+    response_meta_internal_server_error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: Internal Server Error.
+
+    response_meta_service_unavailable:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 503
+        message:
+          type: string
+          example: Service Unavailable.
+
+    response_meta_success:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Success
+
+    response_meta_unauthorized:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Unauthorized.
+
+  responses:
+
+    response_bad_request:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_bad_request'
+
+    response_forbidden:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_forbidden'
+
+    response_internal_server_error:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_internal_server_error'
+
+    response_not_found:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_not_found'
+
+    response_service_unavailable:
+      description: Service unavailable.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_service_unavailable'
+
+    response_ok:
+      description: Success.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_success'
+
+    response_unauthorized:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            required:
+              - meta
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/response_meta_unauthorized'
+
+  parameters:
+
+    parameter_product_id:
+      name: product_id
+      in: path
+      description: Product ID.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: cdbcdfa3-44e3-464b-8cae-13b0cda16ded
+
+    parameter_user_id:
+      name: user_id
+      in: path
+      description: User ID.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: cdbcdfa3-44e3-464b-8cae-13b0cda16ded

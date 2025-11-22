@@ -1,0 +1,5 @@
+connexion[swagger-ui]==2.7.0
+flask==1.1.2
+gunicorn==20.0.4
+pika==1.1.0
+python-logstash-async==2.1.1

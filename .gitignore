@@ -1,0 +1,7 @@
+.idea
+.vscode
+report.html
+report.xml
+test/venv
+*.log
+*.pyc
