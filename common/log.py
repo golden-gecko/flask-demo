@@ -27,14 +27,15 @@ def get_logger() -> logging.Logger:
             ssl_verify=False
         )
         logstash_handler.setFormatter(logstash_formatter)
+        logstash_handler.setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
 
         stream_formatter = logging.Formatter('[%(asctime)s] [%(filename)s] [%(lineno)d] [%(levelname)s] %(message)s')
 
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(stream_formatter)
+        stream_handler.setLevel(os.environ.get('LOG_LEVEL', 'DEBUG'))
 
         logger = logging.getLogger()
-        logger.setLevel(os.environ.get('LOG_LEVEL', 'DEBUG'))
         logger.addHandler(stream_handler)
         logger.addHandler(logstash_handler)
 
